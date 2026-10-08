@@ -1,98 +1,136 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  Button,
+  ScrollView,
+} from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { styles } from "../styles";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
+interface Menu {
+  name: string;
+  price: string;
+}
+
+const menus: Menu[] = [
+  {
+    name: "Kopi Susu",
+    price: "Rp13.000",
+  },
+  {
+    name: "Americano",
+    price: "Rp13.000",
+  },
+  {
+    name: "Choco Banana",
+    price: "Rp15.000",
+  },
+  {
+    name: "Nasi Goreng",
+    price: "Rp15.000",
+  },
+  {
+    name: "Mie Goreng",
+    price: "Rp13.000",
+  },
+];
+
+export default function Index() {
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  const menuPosition = useRef(0);
+
+  const [search, setSearch] = useState("");
+
+  const filteredMenus = menus.filter((menu) =>
+    menu.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  function renderMenu(menu: Menu) {
     return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
+      <View style={styles.menuCard} key={menu.name}>
+        <Text style={styles.menuName}>{menu.name}</Text>
+
+        <Text style={styles.menuPrice}>{menu.price}</Text>
+      </View>
     );
   }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+
+  function goToMenu() {
+    scrollViewRef.current?.scrollTo({
+      y: menuPosition.current,
+      animated: true,
+    });
+  }
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <ScrollView
+      ref={scrollViewRef}
+      style={styles.scrollView}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* BERANDA */}
+      <View style={styles.home}>
+        <Image
+          source={require("../../assets/images/logo-kedai.jpeg")}
+          style={styles.logo}
+        />
+
+        <Text style={styles.title}>Kedai Tong Djajakarta</Text>
+
+        <Text style={styles.subtitle}>
+          Makanan dan minuman untuk teman kuliah
+        </Text>
+
+        <View style={styles.homeButton}>
+          <Button
+            title="Lihat Menu"
+            onPress={goToMenu}
+            color="#B51F1F"
+          />
+        </View>
+      </View>
+
+      {/* DAFTAR MENU */}
+      <View
+        style={styles.menuSection}
+        onLayout={(event) => {
+          menuPosition.current = event.nativeEvent.layout.y;
+        }}
+      >
+        <Text style={styles.sectionTitle}>Daftar Menu</Text>
+
+        <TextInput
+          style={styles.searchBox}
+          placeholder="Cari menu..."
+          value={search}
+          onChangeText={setSearch}
+        />
+
+        <View style={styles.resetButton}>
+          <Button
+            title="Tampilkan Semua Menu"
+            onPress={() => setSearch("")}
+            color="#B51F1F"
+          />
+        </View>
+
+        {filteredMenus.length > 0 ? (
+          filteredMenus.map(renderMenu)
+        ) : (
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#777777",
+              marginTop: 10,
+            }}
+          >
+            Menu tidak ditemukan.
+          </Text>
+        )}
+      </View>
+    </ScrollView>
   );
 }
-
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});
