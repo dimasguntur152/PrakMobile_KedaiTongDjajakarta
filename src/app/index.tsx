@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
 import {
-  View,
-  Text,
-  Image,
-  TextInput,
   Button,
+  Image,
   ScrollView,
+  Text,
+  TextInput,
+  useWindowDimensions,
+  View,
 } from "react-native";
 
 import { styles } from "../styles";
@@ -16,33 +17,19 @@ interface Menu {
 }
 
 const menus: Menu[] = [
-  {
-    name: "Kopi Susu",
-    price: "Rp13.000",
-  },
-  {
-    name: "Americano",
-    price: "Rp13.000",
-  },
-  {
-    name: "Choco Banana",
-    price: "Rp15.000",
-  },
-  {
-    name: "Nasi Goreng",
-    price: "Rp15.000",
-  },
-  {
-    name: "Mie Goreng",
-    price: "Rp13.000",
-  },
+  { name: "Kopi Susu", price: "Rp13.000" },
+  { name: "Americano", price: "Rp13.000" },
+  { name: "Choco Banana", price: "Rp15.000" },
+  { name: "Nasi Goreng", price: "Rp15.000" },
+  { name: "Mie Goreng", price: "Rp13.000" },
 ];
 
 export default function Index() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const menuPosition = useRef(0);
-
   const [search, setSearch] = useState("");
+
+  const { height } = useWindowDimensions();
 
   const filteredMenus = menus.filter((menu) =>
     menu.name.toLowerCase().includes(search.toLowerCase())
@@ -52,7 +39,6 @@ export default function Index() {
     return (
       <View style={styles.menuCard} key={menu.name}>
         <Text style={styles.menuName}>{menu.name}</Text>
-
         <Text style={styles.menuPrice}>{menu.price}</Text>
       </View>
     );
@@ -72,13 +58,17 @@ export default function Index() {
       showsVerticalScrollIndicator={false}
     >
       {/* BERANDA */}
-      <View style={styles.home}>
+      <View
+        style={[styles.home, { minHeight: height }]}
+      >
         <Image
           source={require("../../assets/images/logo-kedai.jpeg")}
           style={styles.logo}
         />
 
-        <Text style={styles.title}>Kedai Tong Djajakarta</Text>
+        <Text style={styles.title}>
+          Kedai Tong Djajakarta
+        </Text>
 
         <Text style={styles.subtitle}>
           Makanan dan minuman untuk teman kuliah
@@ -100,7 +90,9 @@ export default function Index() {
           menuPosition.current = event.nativeEvent.layout.y;
         }}
       >
-        <Text style={styles.sectionTitle}>Daftar Menu</Text>
+        <Text style={styles.sectionTitle}>
+          Daftar Menu
+        </Text>
 
         <TextInput
           style={styles.searchBox}
