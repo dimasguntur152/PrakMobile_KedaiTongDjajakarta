@@ -101,14 +101,6 @@ export default function Index() {
           onChangeText={setSearch}
         />
 
-        <View style={styles.resetButton}>
-          <Button
-            title="Tampilkan Semua Menu"
-            onPress={() => setSearch("")}
-            color="#B51F1F"
-          />
-        </View>
-
         {filteredMenus.length > 0 ? (
           filteredMenus.map(renderMenu)
         ) : (
