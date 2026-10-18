@@ -2,10 +2,27 @@ import { Stack } from "expo-router";
 
 export default function RootLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="detail-pesanan"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="pesanan-berhasil"
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack>
   );
 }

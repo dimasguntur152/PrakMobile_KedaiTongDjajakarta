@@ -1,9 +1,13 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  // Bagian Beranda
-  home: {
+  scrollView: {
     flex: 1,
+    backgroundColor: "#FFF4E6",
+  },
+
+  home: {
+    minHeight: 700,
     backgroundColor: "#FFF4E6",
     alignItems: "center",
     justifyContent: "center",
@@ -36,9 +40,8 @@ export const styles = StyleSheet.create({
     width: 180,
   },
 
-  // Bagian Menu & Detail
   menuSection: {
-    flex: 1, 
+    minHeight: 700,
     backgroundColor: "#FFF4E6",
     paddingHorizontal: 20,
     paddingTop: 35,
