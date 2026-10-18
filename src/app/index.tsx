@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Button,
@@ -25,6 +26,8 @@ const menus: Menu[] = [
 ];
 
 export default function Index() {
+  const router = useRouter(); 
+  
   const scrollViewRef = useRef<ScrollView | null>(null);
   const menuPosition = useRef(0);
   const [search, setSearch] = useState("");
@@ -41,13 +44,27 @@ export default function Index() {
   const { height } = useWindowDimensions();
 
   function renderMenu(menu: Menu) {
-    return (
-      <View style={styles.menuCard} key={menu.name}>
-        <Text style={styles.menuName}>{menu.name}</Text>
-        <Text style={styles.menuPrice}>{menu.price}</Text>
-      </View>
-    );
-  }
+  return (
+    <View style={styles.menuCard} key={menu.name}>
+      <Text style={styles.menuName}>{menu.name}</Text>
+      <Text style={styles.menuPrice}>{menu.price}</Text>
+
+      <Button
+        title="Pesan"
+        onPress={() =>
+          router.push({
+            pathname: "/detail-pesanan",
+            params: {
+              name: menu.name,
+              price: menu.price,
+            },
+          })
+        }
+        color="#B51F1F"
+      />
+    </View>
+  );
+}
 
   function goToMenu() {
     scrollViewRef.current?.scrollTo({
