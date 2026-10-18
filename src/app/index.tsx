@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   Image,
@@ -28,12 +28,17 @@ export default function Index() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const menuPosition = useRef(0);
   const [search, setSearch] = useState("");
+  const [filteredMenus, setFilteredMenus] = useState(menus);
+
+  useEffect(() => {
+    const result = menus.filter((menu) =>
+      menu.name.toLowerCase().includes(search.toLowerCase()),
+    );
+
+    setFilteredMenus(result);
+  }, [search]);
 
   const { height } = useWindowDimensions();
-
-  const filteredMenus = menus.filter((menu) =>
-    menu.name.toLowerCase().includes(search.toLowerCase())
-  );
 
   function renderMenu(menu: Menu) {
     return (
@@ -58,28 +63,20 @@ export default function Index() {
       showsVerticalScrollIndicator={false}
     >
       {/* BERANDA */}
-      <View
-        style={[styles.home, { minHeight: height }]}
-      >
+      <View style={[styles.home, { minHeight: height }]}>
         <Image
           source={require("../../assets/images/logo-kedai.jpeg")}
           style={styles.logo}
         />
 
-        <Text style={styles.title}>
-          Kedai Tong Djajakarta
-        </Text>
+        <Text style={styles.title}>Kedai Tong Djajakarta</Text>
 
         <Text style={styles.subtitle}>
           Makanan dan minuman untuk teman kuliah
         </Text>
 
         <View style={styles.homeButton}>
-          <Button
-            title="Lihat Menu"
-            onPress={goToMenu}
-            color="#B51F1F"
-          />
+          <Button title="Lihat Menu" onPress={goToMenu} color="#B51F1F" />
         </View>
       </View>
 
@@ -90,9 +87,7 @@ export default function Index() {
           menuPosition.current = event.nativeEvent.layout.y;
         }}
       >
-        <Text style={styles.sectionTitle}>
-          Daftar Menu
-        </Text>
+        <Text style={styles.sectionTitle}>Daftar Menu</Text>
 
         <TextInput
           style={styles.searchBox}
