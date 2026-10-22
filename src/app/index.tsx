@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  Button,
   Image,
+  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -26,10 +26,11 @@ const menus: Menu[] = [
 ];
 
 export default function Index() {
-  const router = useRouter(); 
-  
+  const router = useRouter();
+
   const scrollViewRef = useRef<ScrollView | null>(null);
   const menuPosition = useRef(0);
+
   const [search, setSearch] = useState("");
   const [filteredMenus, setFilteredMenus] = useState(menus);
 
@@ -44,27 +45,31 @@ export default function Index() {
   const { height } = useWindowDimensions();
 
   function renderMenu(menu: Menu) {
-  return (
-    <View style={styles.menuCard} key={menu.name}>
-      <Text style={styles.menuName}>{menu.name}</Text>
-      <Text style={styles.menuPrice}>{menu.price}</Text>
+    return (
+      <View style={styles.menuCard} key={menu.name}>
+        <View style={styles.menuInfo}>
+          <Text style={styles.menuName}>{menu.name}</Text>
 
-      <Button
-        title="Pesan"
-        onPress={() =>
-          router.push({
-            pathname: "/detail-pesanan",
-            params: {
-              name: menu.name,
-              price: menu.price,
-            },
-          })
-        }
-        color="#B51F1F"
-      />
-    </View>
-  );
-}
+          <Text style={styles.menuPrice}>{menu.price}</Text>
+        </View>
+
+        <Pressable
+          style={styles.menuButton}
+          onPress={() =>
+            router.push({
+              pathname: "/detail-pesanan",
+              params: {
+                name: menu.name,
+                price: menu.price,
+              },
+            })
+          }
+        >
+          <Text style={styles.buttonText}>Pesan</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   function goToMenu() {
     scrollViewRef.current?.scrollTo({
@@ -92,9 +97,9 @@ export default function Index() {
           Makanan dan minuman untuk teman kuliah
         </Text>
 
-        <View style={styles.homeButton}>
-          <Button title="Lihat Menu" onPress={goToMenu} color="#B51F1F" />
-        </View>
+        <Pressable style={styles.homeButton} onPress={goToMenu}>
+          <Text style={styles.buttonText}>Lihat Menu</Text>
+        </Pressable>
       </View>
 
       {/* DAFTAR MENU */}
@@ -116,15 +121,7 @@ export default function Index() {
         {filteredMenus.length > 0 ? (
           filteredMenus.map(renderMenu)
         ) : (
-          <Text
-            style={{
-              textAlign: "center",
-              color: "#777777",
-              marginTop: 10,
-            }}
-          >
-            Menu tidak ditemukan.
-          </Text>
+          <Text style={styles.notFound}>Menu tidak ditemukan.</Text>
         )}
       </View>
     </ScrollView>
