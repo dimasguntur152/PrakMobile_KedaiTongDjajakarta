@@ -84,7 +84,6 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#F0B35B",
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -112,6 +111,16 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 22,
     borderRadius: 8,
     marginLeft: 15,
+  },
+
+  retryButton: {
+    backgroundColor: "#B51F1F",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    width: 140,
+    alignSelf: "center",
+    marginTop: 10,
   },
 
   notFound: {

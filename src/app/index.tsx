@@ -29,26 +29,27 @@ export default function Index() {
   const [loadingCoffee, setLoadingCoffee] = useState(true);
   const [coffeeError, setCoffeeError] = useState("");
 
-  // Mengambil data dari Public API
-  useEffect(() => {
-    async function loadCoffee() {
-      try {
-        setLoadingCoffee(true);
+  // Custom Async Function untuk memuat data kopi
+  async function refreshCoffee() {
+    try {
+      setLoadingCoffee(true);
+      setCoffeeError("");
 
-        const result = await getIcedCoffee();
+      const result = await getIcedCoffee();
 
-        setIcedCoffees(result);
-        setCoffeeError("");
-      } catch (error) {
-        setCoffeeError(
-          error instanceof Error ? error.message : "Terjadi kesalahan",
-        );
-      } finally {
-        setLoadingCoffee(false);
-      }
+      setIcedCoffees(result);
+    } catch (error) {
+      setCoffeeError(
+        error instanceof Error ? error.message : "Terjadi kesalahan",
+      );
+    } finally {
+      setLoadingCoffee(false);
     }
+  }
 
-    loadCoffee();
+  // Memuat data kopi ketika halaman pertama kali dibuka
+  useEffect(() => {
+    refreshCoffee();
   }, []);
 
   // Mencari minuman berdasarkan nama
@@ -91,6 +92,7 @@ export default function Index() {
     );
   }
 
+  // Mengarahkan pengguna ke bagian daftar menu
   function goToMenu() {
     scrollViewRef.current?.scrollTo({
       y: menuPosition.current,
@@ -141,7 +143,14 @@ export default function Index() {
         {loadingCoffee ? (
           <ActivityIndicator size="large" color="#B51F1F" />
         ) : coffeeError ? (
-          <Text style={styles.notFound}>{coffeeError}</Text>
+          <View>
+            <Text style={styles.notFound}>{coffeeError}</Text>
+
+            {/* Tombol muncul hanya jika API gagal */}
+            <Pressable style={styles.retryButton} onPress={refreshCoffee}>
+              <Text style={styles.buttonText}>Coba Lagi</Text>
+            </Pressable>
+          </View>
         ) : filteredCoffees.length > 0 ? (
           filteredCoffees.map(renderCoffee)
         ) : (
