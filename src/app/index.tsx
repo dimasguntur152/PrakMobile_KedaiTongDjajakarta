@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 
+import { validateCoffeeData } from "../services/coffeePromise";
 import { getIcedCoffee } from "../services/coffeeService";
 import { styles } from "../styles";
 import type { Coffee } from "../types/coffee";
@@ -37,7 +38,11 @@ export default function Index() {
 
       const result = await getIcedCoffee();
 
-      setIcedCoffees(result);
+      // Memeriksa data menggunakan Promise dan then
+      await validateCoffeeData(result).then((data) => {
+        setIcedCoffees(data);
+        setCoffeeError("");
+      });
     } catch (error) {
       setCoffeeError(
         error instanceof Error ? error.message : "Terjadi kesalahan",
