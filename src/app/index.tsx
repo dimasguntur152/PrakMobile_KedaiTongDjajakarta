@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -10,20 +11,11 @@ import {
   View,
 } from "react-native";
 
+import { getIcedCoffee } from "../services/coffeeService";
 import { styles } from "../styles";
+import type { Coffee } from "../types/coffee";
 
-interface Menu {
-  name: string;
-  price: string;
-}
-
-const menus: Menu[] = [
-  { name: "Kopi Susu", price: "Rp13.000" },
-  { name: "Americano", price: "Rp13.000" },
-  { name: "Choco Banana", price: "Rp15.000" },
-  { name: "Nasi Goreng", price: "Rp15.000" },
-  { name: "Mie Goreng", price: "Rp13.000" },
-];
+const COFFEE_PRICE = "Rp15.000";
 
 export default function Index() {
   const router = useRouter();
@@ -32,25 +24,53 @@ export default function Index() {
   const menuPosition = useRef(0);
 
   const [search, setSearch] = useState("");
-  const [filteredMenus, setFilteredMenus] = useState(menus);
+  const [icedCoffees, setIcedCoffees] = useState<Coffee[]>([]);
+  const [filteredCoffees, setFilteredCoffees] = useState<Coffee[]>([]);
+  const [loadingCoffee, setLoadingCoffee] = useState(true);
+  const [coffeeError, setCoffeeError] = useState("");
 
+  // Mengambil data dari Public API
   useEffect(() => {
-    const result = menus.filter((menu) =>
-      menu.name.toLowerCase().includes(search.toLowerCase()),
+    async function loadCoffee() {
+      try {
+        setLoadingCoffee(true);
+
+        const result = await getIcedCoffee();
+
+        setIcedCoffees(result);
+        setCoffeeError("");
+      } catch (error) {
+        setCoffeeError(
+          error instanceof Error ? error.message : "Terjadi kesalahan",
+        );
+      } finally {
+        setLoadingCoffee(false);
+      }
+    }
+
+    loadCoffee();
+  }, []);
+
+  // Mencari minuman berdasarkan nama
+  useEffect(() => {
+    const result = icedCoffees.filter((coffee) =>
+      coffee.title.toLowerCase().includes(search.toLowerCase()),
     );
 
-    setFilteredMenus(result);
-  }, [search]);
+    setFilteredCoffees(result);
+  }, [search, icedCoffees]);
 
   const { height } = useWindowDimensions();
 
-  function renderMenu(menu: Menu) {
+  // Menampilkan menu dari API
+  function renderCoffee(coffee: Coffee) {
     return (
-      <View style={styles.menuCard} key={menu.name}>
-        <View style={styles.menuInfo}>
-          <Text style={styles.menuName}>{menu.name}</Text>
+      <View style={styles.menuCard} key={coffee.id}>
+        <Image source={{ uri: coffee.image }} style={styles.coffeeThumb} />
 
-          <Text style={styles.menuPrice}>{menu.price}</Text>
+        <View style={styles.menuInfo}>
+          <Text style={styles.menuName}>{coffee.title}</Text>
+          <Text style={styles.menuPrice}>{COFFEE_PRICE}</Text>
         </View>
 
         <Pressable
@@ -59,8 +79,8 @@ export default function Index() {
             router.push({
               pathname: "/detail-pesanan",
               params: {
-                name: menu.name,
-                price: menu.price,
+                name: coffee.title,
+                price: COFFEE_PRICE,
               },
             })
           }
@@ -102,7 +122,7 @@ export default function Index() {
         </Pressable>
       </View>
 
-      {/* DAFTAR MENU */}
+      {/* DAFTAR MENU DARI API */}
       <View
         style={styles.menuSection}
         onLayout={(event) => {
@@ -113,15 +133,19 @@ export default function Index() {
 
         <TextInput
           style={styles.searchBox}
-          placeholder="Cari menu..."
+          placeholder="Cari minuman..."
           value={search}
           onChangeText={setSearch}
         />
 
-        {filteredMenus.length > 0 ? (
-          filteredMenus.map(renderMenu)
+        {loadingCoffee ? (
+          <ActivityIndicator size="large" color="#B51F1F" />
+        ) : coffeeError ? (
+          <Text style={styles.notFound}>{coffeeError}</Text>
+        ) : filteredCoffees.length > 0 ? (
+          filteredCoffees.map(renderCoffee)
         ) : (
-          <Text style={styles.notFound}>Menu tidak ditemukan.</Text>
+          <Text style={styles.notFound}>Minuman tidak ditemukan.</Text>
         )}
       </View>
     </ScrollView>

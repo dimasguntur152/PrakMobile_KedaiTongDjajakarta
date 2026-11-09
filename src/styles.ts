@@ -219,4 +219,11 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 22,
     borderRadius: 8,
   },
+
+  coffeeThumb: {
+    width: 75,
+    height: 75,
+    borderRadius: 10,
+    marginRight: 12,
+  },
 });
