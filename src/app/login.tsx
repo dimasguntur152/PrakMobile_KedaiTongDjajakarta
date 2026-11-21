@@ -1,14 +1,15 @@
+
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import { styles } from "../styles";
@@ -49,7 +50,7 @@ export default function Login() {
 
       if (isRegistering) {
         // Membuat akun baru di Supabase
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: cleanEmail,
           password: password,
           options: {
@@ -63,6 +64,17 @@ export default function Login() {
           throw error;
         }
 
+        // Jika Supabase langsung memberikan session,
+        // lakukan logout agar pengguna kembali ke Login
+        if (data.session) {
+          const { error: signOutError } =
+            await supabase.auth.signOut();
+
+          if (signOutError) {
+            throw signOutError;
+          }
+        }
+
         // Pendaftaran berhasil, kembali ke mode Login
         setMessage(
           "Pendaftaran berhasil! Silakan masuk menggunakan akun yang sudah dibuat.",
@@ -73,10 +85,11 @@ export default function Login() {
         setIsRegistering(false);
       } else {
         // Masuk menggunakan akun yang sudah terdaftar
-        const { error } = await supabase.auth.signInWithPassword({
-          email: cleanEmail,
-          password: password,
-        });
+        const { error } =
+          await supabase.auth.signInWithPassword({
+            email: cleanEmail,
+            password: password,
+          });
 
         if (error) {
           throw error;
@@ -113,7 +126,9 @@ export default function Login() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.card}>
-          <Text style={styles.loginTitle}>Kedai Tong Djajakarta</Text>
+          <Text style={styles.loginTitle}>
+            Kedai Tong Djajakarta
+          </Text>
 
           <Text style={styles.loginSubtitle}>
             {isRegistering
@@ -123,7 +138,10 @@ export default function Login() {
 
           {isRegistering && (
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Nama Pengguna</Text>
+              <Text style={styles.label}>
+                Nama Pengguna
+              </Text>
+
               <TextInput
                 style={styles.input}
                 placeholder="Masukkan nama pengguna"
@@ -137,6 +155,7 @@ export default function Login() {
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email</Text>
+
             <TextInput
               style={styles.input}
               placeholder="Masukkan email"
@@ -151,6 +170,7 @@ export default function Login() {
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
+
             <TextInput
               style={styles.input}
               placeholder="Masukkan password"
@@ -175,7 +195,10 @@ export default function Login() {
           )}
 
           <Pressable
-            style={[styles.button, loading && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              loading && styles.buttonDisabled,
+            ]}
             onPress={handleAuth}
             disabled={loading}
           >
