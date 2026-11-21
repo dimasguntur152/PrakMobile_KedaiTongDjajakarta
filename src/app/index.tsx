@@ -1,3 +1,4 @@
+
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -12,6 +13,7 @@ import {
   View,
 } from "react-native";
 
+import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
 import { validateCoffeeData } from "../services/coffeePromise";
 import { getIcedCoffee } from "../services/coffeeService";
@@ -22,6 +24,16 @@ const COFFEE_PRICE = "Rp15.000";
 
 export default function Index() {
   const router = useRouter();
+
+  // Mengambil data autentikasi dari AuthContext
+  const { session, user, loading } = useAuth();
+
+  // Memantau perubahan data autentikasi
+  useEffect(() => {
+    console.log("Session:", session);
+    console.log("User:", user);
+    console.log("Loading:", loading);
+  }, [session, user, loading]);
 
   const scrollViewRef = useRef<ScrollView | null>(null);
   const menuPosition = useRef(0);
@@ -171,7 +183,6 @@ export default function Index() {
           <View>
             <Text style={styles.notFound}>{coffeeError}</Text>
 
-            {/* Tombol muncul hanya jika API gagal */}
             <Pressable style={styles.retryButton} onPress={refreshCoffee}>
               <Text style={styles.buttonText}>Coba Lagi</Text>
             </Pressable>
