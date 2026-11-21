@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -11,6 +12,7 @@ import {
   View,
 } from "react-native";
 
+import { supabase } from "../lib/supabase";
 import { validateCoffeeData } from "../services/coffeePromise";
 import { getIcedCoffee } from "../services/coffeeService";
 import { styles } from "../styles";
@@ -29,6 +31,24 @@ export default function Index() {
   const [filteredCoffees, setFilteredCoffees] = useState<Coffee[]>([]);
   const [loadingCoffee, setLoadingCoffee] = useState(true);
   const [coffeeError, setCoffeeError] = useState("");
+
+  // Fungsi untuk keluar dari akun Supabase
+  async function handleSignOut() {
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        throw error;
+      }
+
+      router.replace("/login");
+    } catch (error) {
+      Alert.alert(
+        "Gagal Keluar",
+        error instanceof Error ? error.message : "Terjadi kesalahan.",
+      );
+    }
+  }
 
   // Custom Async Function untuk memuat data kopi
   async function refreshCoffee() {
@@ -162,6 +182,11 @@ export default function Index() {
           <Text style={styles.notFound}>Minuman tidak ditemukan.</Text>
         )}
       </View>
+
+      {/* Tombol untuk keluar dari akun */}
+      <Pressable style={styles.homeButton} onPress={handleSignOut}>
+        <Text style={styles.buttonText}>Keluar</Text>
+      </Pressable>
     </ScrollView>
   );
 }

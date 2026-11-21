@@ -235,4 +235,84 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 12,
   },
+
+  container: {
+    flex: 1,
+    backgroundColor: "#F7F3ED",
+  },
+  content: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 24,
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    padding: 24,
+    borderRadius: 16,
+    elevation: 3,
+  },
+  loginTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#6B241E",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  loginSubtitle: {
+    fontSize: 14,
+    color: "#666666",
+    textAlign: "center",
+    marginBottom: 28,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333333",
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#D8D0C6",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 15,
+    backgroundColor: "#FFFFFF",
+  },
+  message: {
+    fontSize: 13,
+    marginBottom: 14,
+  },
+  errorMessage: {
+    color: "#B42318",
+  },
+  successMessage: {
+    color: "#16803C",
+  },
+  button: {
+    backgroundColor: "#8B2E24",
+    padding: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  loginButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  switchButton: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  switchText: {
+    color: "#8B2E24",
+    fontSize: 14,
+    fontWeight: "600",
+  },
 });
