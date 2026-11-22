@@ -1,4 +1,3 @@
-
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -11,7 +10,10 @@ import {
   TextInput,
   useWindowDimensions,
   View,
+  type ScrollViewInstance,
 } from "react-native";
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
@@ -35,7 +37,16 @@ export default function Index() {
     console.log("Loading:", loading);
   }, [session, user, loading]);
 
-  const scrollViewRef = useRef<ScrollView | null>(null);
+  // Mengambil nama dan email pengguna
+  const displayName =
+    user?.user_metadata?.callsign ||
+    user?.user_metadata?.full_name ||
+    user?.email?.split("@")[0] ||
+    "Pengguna";
+
+  const displayEmail = user?.email || "Email tidak tersedia";
+
+  const scrollViewRef = useRef<ScrollViewInstance | null>(null);
   const menuPosition = useRef(0);
 
   const [search, setSearch] = useState("");
@@ -44,7 +55,6 @@ export default function Index() {
   const [loadingCoffee, setLoadingCoffee] = useState(true);
   const [coffeeError, setCoffeeError] = useState("");
 
-  // Fungsi untuk keluar dari akun Supabase
   async function handleSignOut() {
     try {
       const { error } = await supabase.auth.signOut();
@@ -62,7 +72,7 @@ export default function Index() {
     }
   }
 
-  // Custom Async Function untuk memuat data kopi
+  // Memuat data kopi dari API
   async function refreshCoffee() {
     try {
       setLoadingCoffee(true);
@@ -70,7 +80,6 @@ export default function Index() {
 
       const result = await getIcedCoffee();
 
-      // Memeriksa data menggunakan Promise dan then
       await validateCoffeeData(result).then((data) => {
         setIcedCoffees(data);
         setCoffeeError("");
@@ -84,7 +93,7 @@ export default function Index() {
     }
   }
 
-  // Memuat data kopi ketika halaman pertama kali dibuka
+  // Memuat data kopi ketika halaman dibuka
   useEffect(() => {
     refreshCoffee();
   }, []);
@@ -100,7 +109,7 @@ export default function Index() {
 
   const { height } = useWindowDimensions();
 
-  // Menampilkan menu dari API
+  // Menampilkan menu kopi
   function renderCoffee(coffee: Coffee) {
     return (
       <View style={styles.menuCard} key={coffee.id}>
@@ -129,7 +138,7 @@ export default function Index() {
     );
   }
 
-  // Mengarahkan pengguna ke bagian daftar menu
+  // Menuju bagian daftar menu
   function goToMenu() {
     scrollViewRef.current?.scrollTo({
       y: menuPosition.current,
@@ -138,66 +147,86 @@ export default function Index() {
   }
 
   return (
-    <ScrollView
-      ref={scrollViewRef}
-      style={styles.scrollView}
-      showsVerticalScrollIndicator={false}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#FFF4E6" }}
+      edges={["top"]}
     >
-      {/* BERANDA */}
-      <View style={[styles.home, { minHeight: height }]}>
-        <Image
-          source={require("../../assets/images/logo-kedai.jpeg")}
-          style={styles.logo}
-        />
-
-        <Text style={styles.title}>Kedai Tong Djajakarta</Text>
-
-        <Text style={styles.subtitle}>
-          Makanan dan minuman untuk teman kuliah
-        </Text>
-
-        <Pressable style={styles.homeButton} onPress={goToMenu}>
-          <Text style={styles.buttonText}>Lihat Menu</Text>
-        </Pressable>
-      </View>
-
-      {/* DAFTAR MENU DARI API */}
-      <View
-        style={styles.menuSection}
-        onLayout={(event) => {
-          menuPosition.current = event.nativeEvent.layout.y;
-        }}
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.sectionTitle}>Daftar Menu</Text>
+        {/* HEADER INFORMASI PENGGUNA */}
+        <View style={styles.headerContainer}>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>Halo, {displayName}!</Text>
 
-        <TextInput
-          style={styles.searchBox}
-          placeholder="Cari minuman..."
-          value={search}
-          onChangeText={setSearch}
-        />
-
-        {loadingCoffee ? (
-          <ActivityIndicator size="large" color="#B51F1F" />
-        ) : coffeeError ? (
-          <View>
-            <Text style={styles.notFound}>{coffeeError}</Text>
-
-            <Pressable style={styles.retryButton} onPress={refreshCoffee}>
-              <Text style={styles.buttonText}>Coba Lagi</Text>
-            </Pressable>
+            <Text style={styles.profileEmail}>{displayEmail}</Text>
           </View>
-        ) : filteredCoffees.length > 0 ? (
-          filteredCoffees.map(renderCoffee)
-        ) : (
-          <Text style={styles.notFound}>Minuman tidak ditemukan.</Text>
-        )}
-      </View>
 
-      {/* Tombol untuk keluar dari akun */}
-      <Pressable style={styles.homeButton} onPress={handleSignOut}>
-        <Text style={styles.buttonText}>Keluar</Text>
-      </Pressable>
-    </ScrollView>
+          <Pressable style={styles.logoutButton} onPress={handleSignOut}>
+            <Text style={styles.logoutButtonText}>logout</Text>
+          </Pressable>
+        </View>
+
+        {/* BERANDA UTAMA */}
+        <View
+          style={[
+            styles.home,
+            {
+              minHeight: height - 80,
+            },
+          ]}
+        >
+          <Image
+            source={require("../../assets/images/logo-kedai.jpeg")}
+            style={styles.logo}
+          />
+
+          <Text style={styles.title}>Kedai Tong Djajakarta</Text>
+
+          <Text style={styles.subtitle}>
+            Makanan dan minuman untuk teman kuliah
+          </Text>
+
+          <Pressable style={styles.homeButton} onPress={goToMenu}>
+            <Text style={styles.buttonText}>Lihat Menu</Text>
+          </Pressable>
+        </View>
+
+        {/* DAFTAR MENU DARI API */}
+        <View
+          style={styles.menuSection}
+          onLayout={(event) => {
+            menuPosition.current = event.nativeEvent.layout.y;
+          }}
+        >
+          <Text style={styles.sectionTitle}>Daftar Menu</Text>
+
+          <TextInput
+            style={styles.searchBox}
+            placeholder="Cari minuman..."
+            value={search}
+            onChangeText={setSearch}
+          />
+
+          {loadingCoffee ? (
+            <ActivityIndicator size="large" color="#B51F1F" />
+          ) : coffeeError ? (
+            <View>
+              <Text style={styles.notFound}>{coffeeError}</Text>
+
+              <Pressable style={styles.retryButton} onPress={refreshCoffee}>
+                <Text style={styles.buttonText}>Coba Lagi</Text>
+              </Pressable>
+            </View>
+          ) : filteredCoffees.length > 0 ? (
+            filteredCoffees.map(renderCoffee)
+          ) : (
+            <Text style={styles.notFound}>Minuman tidak ditemukan.</Text>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

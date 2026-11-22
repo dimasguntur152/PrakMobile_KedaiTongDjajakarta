@@ -6,6 +6,49 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FFF4E6",
   },
 
+  // HEADER INFORMASI PENGGUNA
+  headerContainer: {
+    width: "100%",
+    backgroundColor: "#FFF4E6",
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 18,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  profileInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+
+  profileName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#222222",
+  },
+
+  profileEmail: {
+    fontSize: 12,
+    color: "#666666",
+    marginTop: 4,
+  },
+
+  logoutButton: {
+    backgroundColor: "#B51F1F",
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+  },
+
+  logoutButtonText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "bold",
+  },
+
+  // BERANDA
   home: {
     minHeight: 700,
     backgroundColor: "#FFF4E6",
@@ -51,6 +94,7 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
 
+  // DAFTAR MENU
   menuSection: {
     minHeight: 700,
     backgroundColor: "#FFF4E6",
@@ -129,6 +173,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
 
+  // DETAIL PESANAN
   detailContainer: {
     flex: 1,
     justifyContent: "center",
@@ -183,6 +228,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
 
+  // PESANAN BERHASIL
   successContainer: {
     flex: 1,
     justifyContent: "center",
@@ -236,21 +282,25 @@ export const styles = StyleSheet.create({
     marginRight: 12,
   },
 
+  // LOGIN
   container: {
     flex: 1,
     backgroundColor: "#F7F3ED",
   },
+
   content: {
     flexGrow: 1,
     justifyContent: "center",
     padding: 24,
   },
+
   card: {
     backgroundColor: "#FFFFFF",
     padding: 24,
     borderRadius: 16,
     elevation: 3,
   },
+
   loginTitle: {
     fontSize: 24,
     fontWeight: "bold",
@@ -258,21 +308,25 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 8,
   },
+
   loginSubtitle: {
     fontSize: 14,
     color: "#666666",
     textAlign: "center",
     marginBottom: 28,
   },
+
   inputGroup: {
     marginBottom: 16,
   },
+
   label: {
     fontSize: 14,
     fontWeight: "600",
     color: "#333333",
     marginBottom: 8,
   },
+
   input: {
     borderWidth: 1,
     borderColor: "#D8D0C6",
@@ -281,16 +335,20 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     backgroundColor: "#FFFFFF",
   },
+
   message: {
     fontSize: 13,
     marginBottom: 14,
   },
+
   errorMessage: {
     color: "#B42318",
   },
+
   successMessage: {
     color: "#16803C",
   },
+
   button: {
     backgroundColor: "#8B2E24",
     padding: 14,
@@ -298,18 +356,22 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
+
   buttonDisabled: {
     opacity: 0.6,
   },
+
   loginButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
+
   switchButton: {
     marginTop: 20,
     alignItems: "center",
   },
+
   switchText: {
     color: "#8B2E24",
     fontSize: 14,
