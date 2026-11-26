@@ -22,8 +22,6 @@ import { getIcedCoffee } from "../services/coffeeService";
 import { styles } from "../styles";
 import type { Coffee } from "../types/coffee";
 
-const COFFEE_PRICE = "Rp15.000";
-
 export default function Index() {
   const router = useRouter();
 
@@ -72,7 +70,6 @@ export default function Index() {
     }
   }
 
-  // Memuat data kopi dari API
   async function refreshCoffee() {
     try {
       setLoadingCoffee(true);
@@ -80,10 +77,10 @@ export default function Index() {
 
       const result = await getIcedCoffee();
 
-      await validateCoffeeData(result).then((data) => {
-        setIcedCoffees(data);
-        setCoffeeError("");
-      });
+      const data = await validateCoffeeData(result);
+
+      setIcedCoffees(data);
+      setCoffeeError("");
     } catch (error) {
       setCoffeeError(
         error instanceof Error ? error.message : "Terjadi kesalahan",
@@ -93,15 +90,13 @@ export default function Index() {
     }
   }
 
-  // Memuat data kopi ketika halaman dibuka
   useEffect(() => {
     refreshCoffee();
   }, []);
 
-  // Mencari minuman berdasarkan nama
   useEffect(() => {
     const result = icedCoffees.filter((coffee) =>
-      coffee.title.toLowerCase().includes(search.toLowerCase()),
+      coffee.name.toLowerCase().includes(search.toLowerCase()),
     );
 
     setFilteredCoffees(result);
@@ -109,15 +104,17 @@ export default function Index() {
 
   const { height } = useWindowDimensions();
 
-  // Menampilkan menu kopi
   function renderCoffee(coffee: Coffee) {
     return (
       <View style={styles.menuCard} key={coffee.id}>
-        <Image source={{ uri: coffee.image }} style={styles.coffeeThumb} />
-
         <View style={styles.menuInfo}>
-          <Text style={styles.menuName}>{coffee.title}</Text>
-          <Text style={styles.menuPrice}>{COFFEE_PRICE}</Text>
+          <Text style={styles.menuName}>{coffee.name}</Text>
+
+          <Text style={styles.menuPrice}>${coffee.price.toFixed(2)}</Text>
+
+          <Text style={styles.profileEmail}>
+            {coffee.type === "hot" ? "Kopi Panas" : "Minuman Dingin"}
+          </Text>
         </View>
 
         <Pressable
@@ -126,8 +123,8 @@ export default function Index() {
             router.push({
               pathname: "/detail-pesanan",
               params: {
-                name: coffee.title,
-                price: COFFEE_PRICE,
+                name: coffee.name,
+                price: coffee.price.toString(),
               },
             })
           }
@@ -138,7 +135,6 @@ export default function Index() {
     );
   }
 
-  // Menuju bagian daftar menu
   function goToMenu() {
     scrollViewRef.current?.scrollTo({
       y: menuPosition.current,
